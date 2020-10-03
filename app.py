@@ -28,7 +28,7 @@ from pytube import YouTube
 import pytube
 from threading import Thread
 
-Window.size = (360,600)
+# Window.size = (360,600)
 
 
 kivysome.enable("https://kit.fontawesome.com/46f5059413.js", group=kivysome.FontGroup.SOLID)
