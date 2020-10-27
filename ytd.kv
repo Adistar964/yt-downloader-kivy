@@ -1,0 +1,205 @@
+
+
+<tutorial>:
+	BoxLayout:
+		orientation: 'vertical'
+		MDToolbar:
+			title: 'YTD'
+			left_action_items:[['menu',lambda x:helpbar.toggle_nav_drawer()]]
+			md_bg_color:(255/255,51/255,51/255,1)
+		BoxLayout:
+			orientation: 'vertical'
+			padding:16
+			Image:
+				source:"teach.png"
+			ScrollView:
+				info:info
+				MDLabel:
+					id:info
+			        text_size: self.width, None
+			        size_hint_y: None
+			        height: self.texture_size[1]
+					text:"This app is mainly made for extracting videos from YouTube.\nSo, for the first, head over to YouTube, then go over to your preferred video, then click on share option.\nAfter that, You can click on 'copy link' option which will get the url address of the video.\nAnd then, Come to this app,  paste your url copied to the text field or You can simply click on the paste option to paste the url copied.\n After that, click on 'download' button to download your preferred video.\nOr you can also click on 'Download audio', for getting the only-audio version of the video.\nThere is also a butotn next to the paste option, which is for clearing the text field if it gets messy.\n"
+	MDNavigationDrawer:
+		id : helpbar
+		BoxLayout:
+			orientation: 'vertical'
+			Image:
+				source:"logo.png"
+			ScrollView:
+				MDList:
+					OneLineIconListItem:
+						text:"Home"
+						on_release:app.smanager.current = 'main'
+						IconLeftWidget:
+							icon:"home-circle"
+					OneLineIconListItem:
+						text:"About"
+						on_release:app.smanager.current = 'about'
+						IconLeftWidget:
+							icon:"account"
+					OneLineIconListItem:
+						text:"Help"
+						on_release:app.smanager.current = 'helpnav'
+						IconLeftWidget:
+							icon:"account-question"
+
+<about>:
+	BoxLayout:
+		orientation: 'vertical'
+		MDToolbar:
+			title: 'YTD'
+			left_action_items:[['menu',lambda x:helpbar.toggle_nav_drawer()]]
+			md_bg_color:(255/255,51/255,51/255,1)
+		BoxLayout:
+			orientation: 'vertical'
+			padding:16
+			Image:
+				source:"about.png"
+			ScrollView:
+				MDList:
+					TwoLineListItem:
+						text:"Adistar-964"
+						secondary_text:"Owner"
+					TwoLineListItem:
+						text:"Ali"
+						secondary_text:"Main-Contributor"
+					TwoLineListItem:
+						text:"YTD-964"
+						secondary_text:"App-name"
+					TwoLineListItem:
+						text:"Purpose"
+						secondary_text:"Get videos from YT"
+					TwoLineListItem:
+						text:"Cost"
+						secondary_text:"free"
+	MDNavigationDrawer:
+		id : helpbar
+		BoxLayout:
+			orientation: 'vertical'
+			Image:
+				source:"logo.png"
+			ScrollView:
+				MDList:
+					OneLineIconListItem:
+						text:"Home"
+						on_release:app.smanager.current = 'main'
+						IconLeftWidget:
+							icon:"home-circle"
+					OneLineIconListItem:
+						text:"Help"
+						on_release:app.smanager.current = 'helpnav'
+						IconLeftWidget:
+							icon:"account-question"
+					OneLineIconListItem:
+						text:"Tutorial"
+						on_release:app.smanager.current = 'tutorial'
+						IconLeftWidget:
+							icon:"head-question"
+
+<helpnav>:
+	BoxLayout:
+		orientation: 'vertical'
+		MDToolbar:
+			title: 'YTD'
+			left_action_items:[['menu',lambda x:helpbar.toggle_nav_drawer()]]
+			md_bg_color:(255/255,51/255,51/255,1)
+		BoxLayout:
+			orientation: 'vertical'
+			padding:16
+			Image:
+				source:"logo.png"
+			ScrollView:
+				MDLabel:
+					pos_hint:{'top':0.5, 'right':0.3}
+					text:"If you are facing any problem, then that might be because of intenet connectivity issues, so sometimes you have to wait a little bit. Please feel free to inform us about the problem if it perssists."
+
+	MDNavigationDrawer:
+		id : helpbar
+		BoxLayout:
+			orientation: 'vertical'
+			Image:
+				source:"logo.png"
+			ScrollView:
+				MDList:
+					OneLineIconListItem:
+						text:"Home"
+						on_release:app.smanager.current = 'main'
+						IconLeftWidget:
+							icon:"home-circle"
+					OneLineIconListItem:
+						text:"About"
+						on_release:app.smanager.current = 'about'
+						IconLeftWidget:
+							icon:"account"
+					OneLineIconListItem:
+						text:"Tutorial"
+						on_release:app.smanager.current = 'tutorial'
+						IconLeftWidget:
+							icon:"head-question"
+
+<main>:
+	url:url
+	BoxLayout:
+		orientation:'vertical'
+		MDToolbar:
+			title: 'YTD'
+			left_action_items:[['menu',lambda x:navbar.toggle_nav_drawer()]]
+			md_bg_color:(255/255,51/255,51/255,1)
+		FloatLayout:
+			MDTextField:
+				id: url
+				multiline: False
+				size_hint:(0.8,None)
+				height:100
+				hint_text:'Enter the URL'
+				helper_text:"Youtube URL"
+				helper_text_mode:"on_focus"
+				pos_hint:{'center_x':0.5, 'center_y': 0.7}
+				icon_right:"youtube"
+				icon_right_color: (255/255,51/255,51/255,1)
+			MDFloatingActionButton:
+				icon:"clipboard"
+				pos_hint:{'center_y':0.54, 'center_x':0.3}
+				on_release:root.paste()
+			MDFloatingActionButton:
+				icon:"format-clear"
+				pos_hint:{'center_y':0.54, 'center_x':0.57}
+				text_color: (0/255,204/255,153/255,1)
+				on_release:
+					url.focus = True
+					url.text = ''
+			MDRectangleFlatIconButton:
+				icon:"download"
+				text:"Download"
+				pos_hint:{'center_y':0.3, 'center_x':0.4}
+				text_color: (255/255,51/255,51/255,1)
+				on_release:root.show(True)
+			MDRectangleFlatButton:
+				text:"Download audio"
+				pos_hint:{'center_y':0.18, 'center_x':0.4}
+				text_color: (255/255,51/255,51/255,1)
+				on_release:root.show(False)
+	MDNavigationDrawer:
+		id : navbar
+		BoxLayout:
+			orientation: 'vertical'
+			Image:
+				source:"logo.png"
+			ScrollView:
+				MDList:
+					OneLineIconListItem:
+						text:"Help"
+						on_release:app.smanager.current = 'helpnav'
+						IconLeftWidget:
+							icon:"account-question"
+					OneLineIconListItem:
+						text:"About"
+						on_release:app.smanager.current = 'about'
+						IconLeftWidget:
+							icon:"account"
+					OneLineIconListItem:
+						text:"Tutorial"
+						on_release:app.smanager.current = 'tutorial'
+						IconLeftWidget:
+							icon:"head-question"
