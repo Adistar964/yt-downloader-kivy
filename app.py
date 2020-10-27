@@ -1,141 +1,105 @@
-import kivy
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.widget import Widget
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.actionbar import (ActionBar, ActionButton,
-							 ActionGroup, ActionItem,
-							 ActionLabel, ActionOverflow,
-							 ActionPrevious, ActionDropDown,
-							 ActionView)
-from kivy.uix.popup import Popup
-from kivy.uix.scrollview import ScrollView
-from kivy.clock import Clock
-from kivy.core.window import Window
-
-from kivy.properties import ObjectProperty
-from kivy.lang import Builder
-from kivy.config import Config
+from kivymd.app import MDApp
+from kivymd.uix.button import MDRectangleFlatIconButton,MDFlatButton,MDRectangleFlatButton,Button,MDFloatingActionButton
+from kivymd.uix.screen import MDScreen
+from kivy.uix.screenmanager import ScreenManager
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.label import MDLabel
+from kivymd.uix.progressbar import MDProgressBar
+from kivymd.uix.gridlayout import GridLayout
 from kivy.core.clipboard import Clipboard as cb
-
-import kivysome 
-from pytube import YouTube
-import pytube
+from kivymd.toast import toast
+from kivy.properties import ObjectProperty
 from threading import Thread
+import pytube as pt
 
-# Window.size = (360,600)
-
-
-kivysome.enable("https://kit.fontawesome.com/46f5059413.js", group=kivysome.FontGroup.SOLID)
-
-Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
-
-class helptut(Screen):
-	def __init__(self, **kwargs):
-		super().__init__(**kwargs)	
-
-	def on_back(self, *args):
-		ytd964.smanager.current = 'main'
-		ytd964.smanager.transition.direction = 'right'
-
-
-class about(FloatLayout):
+class helpnav(MDScreen):
 	pass
 
-class helpp(FloatLayout):
+class about(MDScreen):
 	pass
 
-class ht(ScrollView):
+class tutorial(MDScreen):
 	pass
 
-class yterror(FloatLayout):
-	pass
+class main(MDScreen):
 
-class ytsuccess(FloatLayout):
-	pass
+	url = ObjectProperty(None)
 
-class lenerror(FloatLayout):
-	pass
+	def show(self,typed):
+		msg = GridLayout()
+		msg.cols = 1
+		msg.add_widget(MDLabel(text='Downloading...'))
+		self.prog = MDProgressBar()
+		msg.add_widget(self.prog)
+		cancel = MDFlatButton(text='Cancel', on_release=self.stpvid)
+		self.dialog = MDDialog(type='custom',content_cls=msg,
+								buttons=[cancel],size_hint=(0.5,0.5),
+								pos_hint={'top':0.7,'right':0.7})
+		self.dialog.auto_dismiss = False
+		Thread(target=lambda:self.download(typed)).start()
 
-class main(Screen):
-	submit = ObjectProperty(None)
-	inp = ObjectProperty(None)
-	def __init__(self, **_):
-		super().__init__(**_)
+	def paste(self,*args):
+		self.url.focus = True
+		self.url.text = cb.paste()
 
-		self.submit.bind(on_release=self.on_press)
+	def stpvid(self,*args):
+		self.dialog.dismiss()
 
-	def download(self):
-		ytvid = self.yt.streams.first()
-		ytvid.download()
+	def progfunc(self, stream,chunk,bytes_remaining):
+		self.dialog.open()
+		size = stream.filesize
+		remaining = size - bytes_remaining
+		self.percent = remaining / size * 100 
+		self.prog.value = self.percent
 
-	def putText(self):
-		text = cb.paste()
-		self.inp.text = self.inp.text + text 
+	def completefunc(self,*args):
+		self.dialog.dismiss()
+		dialog = MDDialog(text='Completed!',size_hint=(.5,.5),
+							pos_hint={'top':0.7,'right':0.7},
+							buttons=[MDFlatButton(text='close',
+							on_release=lambda x:dialog.dismiss())])
+		dialog.open()
+		toast('Completed Successfully!')
 
-	def lengtherror(self):
-		Popup(title='No URL!', content=lenerror(), size_hint=(None,None), size=(320,320)).open()
-
-	def on_press(self, *args):
-		if len(self.inp.text.strip()) == 0:
-			self.lengtherror()
-		else:
+	def download(self,typed):
+		if len(self.url.text.strip()) != 0:
 			try:
-				self.yt = YouTube(str(self.inp.text).strip())
-				d = Thread(target=self.download())
-				d.start()
-				self.success()
-			except pytube.exceptions.RegexMatchError:
-				self.showerror()
+				self.vid = pt.YouTube(self.url.text)
+				self.vid.register_on_progress_callback(self.progfunc)
+				self.vid.register_on_complete_callback(self.completefunc)
+				self.dialog.open()
 
-	def success(self):
-		Popup(title='Success!', content=ytsuccess(), size_hint=(None,None), size=(300,300)).open()
+			except:
+				toast('invalid URL')
+				dialog1 = MDDialog(text='Invalid URL!',size_hint=(0.5,0.5),
+									pos_hint={'top':0.7,'right':0.7},
+										buttons=[MDFlatButton(text='close',
+												on_release=lambda x:dialog1.dismiss())])
+				dialog1.open()
+			else:
+				toast("Download Started")
+				if typed:
+					self.vid.streams.first().download()
+				else:
+					self.vid.streams.filter(only_audio=True).first().download()
 
-	def showerror(self):
-		Popup(title='Url error!', content=yterror(), size_hint=(None,None), width=300, height=300).open()
+		else:
+			toast("Provide URL!")
+			dialog2 = MDDialog(text='Provide an URL!',size_hint=(0.5,0.5),
+								pos_hint={'top':0.7,'right':0.7},
+									buttons=[MDFlatButton(text='close',
+											on_release=lambda *args:dialog2.dismiss())])
+			dialog2.open()
 
-	def showAbout(self, *args):
-		msg = Popup(title='Info', content=about(),
-					size_hint=(None,None),
-					width=300, height=200)
-		msg.open()
-
-	def showHelp(self, *args):
-		msg = Popup(title='Help', content=helpp(),
-					size_hint=(None,None),
-					width=330, height=230)
-		msg.open()
-
-	def showTut(self, *args):
-		ytd964.smanager.current = 'helptut'
-		ytd964.smanager.transition.direction = 'left'
-
-# kv = Builder.load_file('my.kv') 
-
-class MyApp(App):
+class ytd(MDApp):
 	def build(self):
-		self.icon = 'icon.png'
-		self.title = '964-YTD'
-
 		self.smanager = ScreenManager()
-
-		self.main2 = Screen(name='main')
-		self.main = main()
-		self.main2.add_widget(self.main)
-		self.smanager.add_widget(self.main2)
-
-		self.main = Screen(name='helptut')
-		self.helptut = helptut()
-		self.main.add_widget(self.helptut)
-		self.smanager.add_widget(self.main)
-
+		self.smanager.add_widget(main(name='main'))
+		self.smanager.add_widget(helpnav(name='helpnav'))
+		self.smanager.add_widget(about(name='about'))
+		self.smanager.add_widget(tutorial(name='tutorial'))
 		return self.smanager
 
-if __name__ == '__main__':
-	ytd964 = MyApp()
-	ytd964.run()
+app = ytd()
+app.run()
