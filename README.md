@@ -73,7 +73,3 @@ If you'd like to contribute to this project, please fork the repository and subm
 
 ## Contact
 Author: [Mohammed Abdullah Amaan](mailto:abdullah@abdullahamaan.com)
-
----
-
-Feel free to adjust any sections based on the actual file structure or more details about the app if needed!
