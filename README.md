@@ -1,6 +1,3 @@
-Here's a `README.md` file for the YouTube Downloader app based on the provided code:
-
----
 
 # YouTube Downloader (YTD)
 
